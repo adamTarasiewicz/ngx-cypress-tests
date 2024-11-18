@@ -56,4 +56,3 @@ After starting your application, open second terminal and you can run Cypress te
 
 
     npx cypress open
-# ngx-cypress-tests
