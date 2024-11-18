@@ -3,8 +3,8 @@
 const { Dropdown } = require("bootstrap");
 const { table } = require("console");
 
-describe("Form Layouts", () => {
-  it("Inline form", () => {
+describe("User Interface tests", () => {
+  it("Positive path of filling inline form", () => {
     cy.fixture("example").then((data) => {
       cy.visit("/");
       cy.contains("Forms").click();
@@ -24,12 +24,12 @@ describe("Form Layouts", () => {
 
       cy.url().then((initialUrl) => {
         cy.contains("button", "Submit").click();
-        cy.url().should("eq", initialUrl); // Same URL after Submit clicked
+        cy.url().should("eq", initialUrl);
       });
     });
   });
 
-  it("Using the Grid", () => {
+  it("Positive path of filling grid form", () => {
     cy.fixture("example").then((data) => {
       cy.visit("/");
       cy.contains("Forms").click();
@@ -57,109 +57,7 @@ describe("Form Layouts", () => {
       });
     });
 
-  it("Save subject of the command", () => {
-    cy.visit("/");
-    cy.contains("Forms").click();
-    cy.contains("Form Layouts").click();
-
-    cy.contains("nb-card", "Using the Grid")
-      .find('[for="inputEmail1"]')
-      .should("contain", "Email");
-    cy.contains("nb-card", "Using the Grid")
-      .find('[for="inputPassword2"]')
-      .should("contain", "Password");
-
-    //1.cypress Alias
-    cy.contains("nb-card", "Using the Grid").as("usingTheGrid");
-    cy.get("@usingTheGrid")
-      .find('[for="inputEmail1"]')
-      .should("contain", "Email");
-    cy.get("@usingTheGrid")
-      .find('[for="inputPassword2"]')
-      .should("contain", "Password");
-
-    //2.cypress then() method
-    cy.contains("nb-card", "Using the Grid").then((usingTheGridForm) => {
-      cy.wrap(usingTheGridForm)
-        .find('[for="inputEmail1"]')
-        .should("contain", "Email");
-      cy.wrap(usingTheGridForm)
-        .find('[for="inputPassword2"]')
-        .should("contain", "Password");
-    });
-  });
-
-  it("Extract text values", () => {
-    cy.visit("/");
-    cy.contains("Forms").click();
-    cy.contains("Form Layouts").click();
-
-    //example 1
-    cy.get('[for="exampleInputEmail1"]').should("contain", "Email address");
-
-    //example2
-    cy.get('[for="exampleInputEmail1"]').then((label) => {
-      const labelText = label.text();
-      expect(labelText).to.equal("Email address");
-      cy.wrap(labelText).should("contain", "Email address");
-    });
-
-    //example 3
-    cy.get('[for="exampleInputEmail1"]')
-      .invoke("text")
-      .then((text) => {
-        expect(text).to.equal("Email address");
-      });
-
-    cy.get('[for="exampleInputEmail1"]')
-      .invoke("text")
-      .as("labelText")
-      .should("contain", "Email address");
-
-    //example 4
-    cy.get('[for="exampleInputEmail1"]')
-      .invoke("attr", "class")
-      .then((claasValue) => {
-        expect(claasValue).to.equal("label");
-      });
-
-    //example 5 - invoke property
-    cy.get('[for="exampleInputEmail1"]').type("test@test.com");
-    cy.get("#exampleInputEmail1")
-      .invoke("prop", "value")
-      .should("contain", "test@test.com")
-      .then((property) => {
-        expect(property).to.equal("test@test.com");
-      });
-  });
-
-  it("Radio buttons", () => {
-    cy.visit("/");
-    cy.contains("Forms").click();
-    cy.contains("Form Layouts").click();
-
-    cy.contains("nb-card", "Using the Grid")
-      .find('[type="radio"]')
-      .then((radioButton) => {
-        cy.wrap(radioButton).eq(0).check({ force: true }).should("be.checked");
-        cy.wrap(radioButton).eq(1).check({ force: true });
-        cy.wrap(radioButton).eq(0).should("not.be.checked");
-        cy.wrap(radioButton).eq(2).should("be.disabled");
-      });
-  });
-
-  //checkbox
-  it("Checkboxes", () => {
-    cy.visit("/");
-    cy.contains("Modal & Overlays").click();
-    cy.contains("Toastr").click();
-
-    cy.get('[type="checkbox"]').uncheck({ force: true }); // force:true dla elementow z propertą hidden
-    cy.get('[type="checkbox"]').eq(1).check({ force: true });
-  });
-
-  //date - how to deal with dates/ COMMON datepickers
-  it("Datepicker", () => {
+  it("Datepicker test", () => {
     function selectDayFromCurrent(day) {
       let date = new Date();
       date.setDate(date.getDate() + day);
@@ -200,7 +98,7 @@ describe("Form Layouts", () => {
       });
   });
 
-  it("Lists and dropdowns", () => {
+  it("Changing themes - lists and dropdowns", () => {
     cy.visit("/");
 
     //1
@@ -222,12 +120,11 @@ describe("Form Layouts", () => {
     });
   });
 
-  it("Web tables", () => {
+  it.only("Web tables", () => {
     cy.visit("/");
     cy.contains("Tables & Data").click();
     cy.contains("Smart Table").click();
 
-    //1 - get the row by text
     cy.get("tbody")
       .contains("tr", "Larry")
       .then((tableRow) => {
@@ -237,7 +134,6 @@ describe("Form Layouts", () => {
         cy.wrap(tableRow).find("td").eq(6).should("contain", "35");
       });
 
-    //2 - get the row by index
     cy.get("thead").find(".nb-plus").click();
     cy.get("thead")
       .find("tr")
@@ -256,7 +152,6 @@ describe("Form Layouts", () => {
         cy.wrap(tableColumns).eq(3).should("contain", "Smith");
       });
 
-    //3 - get each row validation
     const age = [20, 30, 40, 200];
 
     cy.wrap(age).each((age) => {
